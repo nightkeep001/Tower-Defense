@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Tower Defense</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- الشريط العلوي -->
+    <header id="topbar">
+      <div class="stat" data-i18n-title="hud.hp">❤️ <b id="hp">20</b></div>
+      <div class="stat coin" id="coinStat" data-i18n-title="hud.coins">🪙 <b id="coins">100</b></div>
+      <div class="stat" data-i18n-title="hud.wave">🌊 <b id="wave">0</b></div>
+      <div class="btns">
+        <button id="btnSpeed" class="icon-btn">⏩ ×1</button>
+        <button id="btnPause" class="icon-btn">⏸</button>
+        <button id="btnSound" class="icon-btn">🔊</button>
+      </div>
+    </header>
+
+    <!-- منطقة اللعب -->
+    <main id="stage">
+      <canvas id="game" width="480" height="600"></canvas>
+      <button id="nextBtn" class="btn gold" hidden></button>
+      <div id="toast"></div>
+
+      <section id="info" hidden>
+        <div class="info-head">
+          <span id="infoIcon" class="info-icon"></span>
+          <b id="infoName"></b>
+          <span id="infoLv" class="lv"></span>
+          <button id="infoClose" class="x">✕</button>
+        </div>
+        <div id="infoStats" class="info-stats"></div>
+        <p id="infoHint" class="hint" data-i18n="i.hint"></p>
+        <div class="info-actions">
+          <button id="btnUpgrade" class="btn green"></button>
+          <button id="btnSell" class="btn red"></button>
+        </div>
+      </section>
+    </main>
+
+    <!-- شريط القدرات (أفقي) -->
+    <div id="spells"></div>
+
+    <footer id="towerBar"></footer>
+
+    <!-- ========== الواجهة الرئيسية ========== -->
+    <div id="menu" class="overlay home">
+      <div class="home-bg" aria-hidden="true">
+        <span class="cloud" style="top:6%;animation-duration:38s">☁️</span>
+        <span class="cloud" style="top:16%;animation-duration:52s;animation-delay:-20s;font-size:34px">☁️</span>
+        <span class="deco" style="left:8%;bottom:30%">🌳</span>
+        <span class="deco" style="right:10%;bottom:34%;font-size:54px">🌳</span>
+        <span class="deco" style="left:70%;bottom:5%;font-size:46px">🏰</span>
+        <div class="road"></div>
+        <span class="walker" style="animation-delay:0s">💀</span>
+        <span class="walker" style="animation-delay:-3s">🦇</span>
+        <span class="walker" style="animation-delay:-6s">🧟</span>
+      </div>
+      <div class="home-content">
+        <div class="logo">🏰</div>
+        <h1 data-i18n="app.title"></h1>
+        <p class="sub" data-i18n="menu.sub"></p>
+        <div class="home-stats">
+          <span>🏆 <span data-i18n="menu.best"></span> <b id="menuBest">0</b></span>
+          <span>💎 <b id="menuGems">0</b></span>
+        </div>
+        <button id="btnStart" class="btn gold big">▶ <span data-i18n="menu.play"></span></button>
+        <button id="btnHub" class="btn green big">🏪 <span data-i18n="menu.shop"></span></button>
+        <div class="home-row">
+          <button id="btnSettings" class="btn blue">⚙️ <span data-i18n="menu.settings"></span></button>
+          <button id="btnHowto" class="btn blue">❓ <span data-i18n="menu.howto"></span></button>
+        </div>
+        <div id="homeLang" class="lang-row"></div>
+      </div>
+    </div>
+
+    <!-- طريقة اللعب -->
+    <div id="howtoOv" class="overlay" hidden>
+      <div class="card">
+        <h2>❓ <span data-i18n="how.title"></span></h2>
+        <ul class="howto">
+          <li data-i18n-html="how.1"></li>
+          <li data-i18n-html="how.2"></li>
+          <li data-i18n-html="how.3"></li>
+          <li data-i18n-html="how.4"></li>
+          <li data-i18n-html="how.5"></li>
+        </ul>
+        <button id="howtoClose" class="btn gold" data-i18n="ok"></button>
+      </div>
+    </div>
+
+    <!-- الإعدادات -->
+    <div id="settingsOv" class="overlay settings" hidden>
+      <div class="card">
+        <div class="hub-head">
+          <h2>⚙️ <span data-i18n="set.title"></span></h2>
+          <button id="setClose" class="x">✕</button>
+        </div>
+        <div class="set-block">
+          <label data-i18n="set.lang"></label>
+          <div id="langGrid" class="lang-grid"></div>
+        </div>
+        <label class="set-row"><span data-i18n="set.sound"></span><input type="checkbox" class="sw" id="setSound"></label>
+        <label class="set-row"><span data-i18n="set.volume"></span><input type="range" id="setVolume" min="0" max="1" step="0.1"></label>
+        <label class="set-row"><span data-i18n="set.shake"></span><input type="checkbox" class="sw" id="setShake"></label>
+        <label class="set-row"><span data-i18n="set.floating"></span><input type="checkbox" class="sw" id="setFloat"></label>
+        <button id="btnReset" class="btn red sm" data-i18n="set.reset"></button>
+      </div>
+    </div>
+
+    <!-- اختيار مكافأة -->
+    <div id="perkOv" class="overlay" hidden>
+      <div class="card">
+        <h2>🎁 <span data-i18n="perk.title"></span></h2>
+        <p class="sub" data-i18n="perk.sub"></p>
+        <div id="perkList" class="perk-list"></div>
+      </div>
+    </div>
+
+    <!-- الإيقاف المؤقت -->
+    <div id="pauseOv" class="overlay" hidden>
+      <div class="card">
+        <h2>⏸ <span data-i18n="pause.title"></span></h2>
+        <button id="btnResume" class="btn green big">▶ <span data-i18n="pause.resume"></span></button>
+        <button id="btnSettingsPause" class="btn blue">⚙️ <span data-i18n="pause.settings"></span></button>
+        <button id="btnQuit" class="btn red" data-i18n="pause.quit"></button>
+      </div>
+    </div>
+
+    <!-- نهاية اللعبة -->
+    <div id="overOv" class="overlay" hidden>
+      <div class="card">
+        <h2>💀 <span data-i18n="over.title"></span></h2>
+        <p id="overSummary"></p>
+        <p class="gems-gain">💎 +<b id="overGems">0</b></p>
+        <p class="best"><span data-i18n="over.best"></span>: <b id="overBest">0</b></p>
+        <button id="btnRestart" class="btn gold big">↻ <span data-i18n="over.again"></span></button>
+        <div class="home-row">
+          <button id="btnHub2" class="btn green">🏪 <span data-i18n="over.shop"></span></button>
+          <button id="btnMenuOver" class="btn blue">🏠 <span data-i18n="over.menu"></span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- المتجر -->
+    <div id="hub" class="overlay hub" hidden>
+      <div class="card wide">
+        <div class="hub-head">
+          <h2>🏪 <span data-i18n="hub.title"></span></h2>
+          <span class="gems">💎 <b id="hubGems">0</b></span>
+          <button id="hubClose" class="x">✕</button>
+        </div>
+        <div id="hubTabs" class="tabs"></div>
+        <div id="hubBody" class="hub-body"></div>
+      </div>
+    </div>
+
+  </div>
+  <script src="lang.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
